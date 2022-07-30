@@ -1,0 +1,213 @@
+html,body { 
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+#outterContainer {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#header{
+    margin-top: 1%;
+    height: 25%;
+    width: 90%;
+    position: relative;
+}
+
+#gridArea{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    min-width: 100%;
+    width:auto;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-radius: 20px;
+    box-shadow: 0px 6px 18px 0px #585858;
+}
+
+#gridContainer{
+    height: 95%;
+    min-width: 95%;
+    width:auto;
+    display: grid;
+    grid-template-areas:
+        'warehouse button'
+        'name date';
+    gap: 10px;
+}
+
+#warehouse{
+    grid-area: warehouse;
+}
+
+#date{
+    grid-area: date;
+}
+
+#name{
+    grid-area: name;
+}
+
+#button{
+    grid-area: button;
+}
+
+.entry{
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+}
+
+label{
+    margin-right: 15px;
+}
+
+.leftInputs{
+    display: flex;
+    width:100px;
+    justify-content: flex-end;
+}
+
+#selectWhs{
+    min-width: 183px;
+    padding: 10px;
+    border: #fff;
+    background-color: lightgray;
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px 0px #585858;
+}
+
+.input{
+    padding: 10px;
+    border: #fff;
+    background-color: lightgray;
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px 0px #585858;
+}
+
+.btu{
+    height: 30px;
+    border: #fff;
+    border-radius: 5px;
+    width: 100px;
+    background-color: #04AA6D;
+    color: #fff;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 18px;
+}
+
+.btu:hover{
+    border:solid#04AA6D;
+    border-width: 2px;
+    background-color: #fff;
+    color: #04AA6D;
+    
+}
+
+#innerContainer{
+    margin-top: 2.5%;
+    min-height: 65%;
+    height: fit-content;
+    width: 90%;
+    box-shadow: 0px 6px 18px 0px #585858;
+}
+
+#btuDiv{
+    width:100%;
+    position: relative;
+}
+
+#btuShow{
+    position: absolute;
+    top: 15px;
+    left: 125px;
+}
+
+#btuAll{
+    position: absolute;
+    top: 15px;
+    left: 236px;
+}
+
+
+#btuSend{
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+
+#selectPlace{
+    min-width: 183px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.trEfects:hover{
+    background-color: #87314e;
+    color:#fff;
+}
+
+.table-striped tbody tr:nth-of-type(odd):hover{
+    background-color: #87314e;
+    color:#fff;
+}
+
+#spinnerOutter{
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#spinnerInner{
+    position: absolute;
+    top: 200px;
+    left: 45%;
+}
+
+#addName{
+    width: 260px;
+}
+
+#reportBtu{
+    position: relative;
+}
+
+#btuClose{
+    position: absolute;
+    right: 25px;
+    top: 80px;
+    z-index: 5;
+    width: fit-content;
+    border-radius: 50%;
+    height: 25px;
+    border: #fff;
+    border-width: 2px;
+    background-color: #04AA6D;
+    color: #fff;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 18px;
+}
+
+#btuClose:hover{
+    border:solid#04AA6D;
+    border-width: 2px;
+    background-color: #fff;
+    color: #04AA6D;
+    
+}
+
+#modal-spinner{
+    left: 43%;
+    position: absolute;
+    top: 100px;
+}

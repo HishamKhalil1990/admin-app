@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/spinner.css" />
+    <link rel="stylesheet" href="/css/modal.css" />
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+    <title>Admin</title>
+  </head>
+  <body>
+    <div style="position:relative;">
+      <div id="reportDiv" style="position:absolute;right:0px;top:115px;z-index: 3;"></div>
+    </div>
+    <div id="outterContainer">
+      <div id="header">
+        <div id="gridArea">
+          <div id="gridContainer">
+            <div class="entry" id="warehouse">
+              <div class="leftInputs">
+                <label
+                  style="display: inline; margin-bottom: 0; font-size: 14px"
+                  for="warehouse"
+                  >اسم المستودع</label
+                >
+              </div>
+              <div id="selectPlace">
+                <div class="lds-ring">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+            </div>
+            <div class="entry" id="button">
+              <button id="btuSearch" class="btu">بحث</button>
+            </div>
+            <div class="entry" id="date">
+              <label
+                style="display: inline; margin-bottom: 0; font-size: 14px"
+                for="date"
+                >تاريخ الجرد</label
+              >
+              <input class="input" id="addDate" name="date" type="date" />
+            </div>
+            <div class="entry" id="name">
+              <div class="leftInputs">
+                <label
+                  style="display: inline; margin-bottom: 0; font-size: 14px"
+                  for="name"
+                  >اسم الجرد</label
+                >
+              </div>
+              <input class="input" id="addName" name="name" type="text" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="innerContainer">
+        <div id="btuDiv">
+          <button id="btuSend" class="btu">ارسال</button>
+          <button id="btuShow" class="btu">عرض</button>
+          <button id="btuAll" class="btu">الكل</button>
+        </div>
+        <div id="tablePlace"></div>
+      </div>
+    </div>
+    <div>
+      <%- include("partials/modal") %>
+  </div>
+  </body>
+</html>
