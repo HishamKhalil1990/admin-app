@@ -49,7 +49,7 @@ const countPage = async (req,res) => {
 const openReqPage = async (req,res) => {
     if(req.session.loggedin)
     {
-
+        res.render('openReq')
     }else{
         res.redirect('/')
     }
