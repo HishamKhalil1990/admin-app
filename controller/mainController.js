@@ -2,9 +2,57 @@ const hana = require('../utils/hana')
 const functions = require('../utils/functions')
 const prisma = require('../utils/prismaDB')
 
-const mainPage = async (req,res) => {
-    await prisma.deleteAll()
-    res.render('main')
+const loginPage = async (req,res) => {
+    res.render('login')
+}
+
+const validate = async (req,res) => {
+    const {username,password} = req.body;
+    const user = await functions.getUser(username,password)
+    if(user == undefined){
+        res.send({msg: 'error'})
+    }
+    else if(user.length != 0){
+        req.session.loggedin = true
+        req.session.username = user[0].Username
+        res.send({msg : 'validate'})
+    }else if (user.length == 0){
+        res.send({msg : 'not validate'})
+    }
+}
+
+const logOut = (req,res) => {
+    req.session.loggedin = false
+    req.session.username = undefined
+    res.render('routing')
+}
+
+const choosePage = async (req,res) => {
+    if(req.session.loggedin)
+    {
+        res.render('choose')
+    }else{
+        res.redirect('/')
+    }
+}
+
+const countPage = async (req,res) => {
+    if(req.session.loggedin)
+    {
+        await prisma.deleteAll()
+        res.render('count')
+    }else{
+        res.redirect('/')
+    }
+}
+
+const openReqPage = async (req,res) => {
+    if(req.session.loggedin)
+    {
+
+    }else{
+        res.redirect('/')
+    }
 }
 
 const getWhs = async (req,res) => {
@@ -80,11 +128,16 @@ const changeAllStatus = async (req,res) => {
 }
 
 module.exports = {
-    mainPage,
+    countPage,
     getWhs,
     getTable,
     changeStatus,
     getReport,
     sendData,
-    changeAllStatus
+    changeAllStatus,
+    loginPage,
+    openReqPage,
+    choosePage,
+    validate,
+    logOut
 }

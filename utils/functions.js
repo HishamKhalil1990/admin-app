@@ -1,6 +1,24 @@
+require('dotenv').config();
 const prisma = require('./prismaDB')
 const hana = require('./hana')
 const sql = require('./sql')
+
+// enviroment variables
+const USERS_TABLE = process.env.USERS_TABLE
+
+const getUser = async (username,password) => {
+    try{
+        const pool = await sql.getSQL();
+        const user = await pool.request().query(`select * from ${USERS_TABLE} where Username = '${username}' and Password = '${password}'`)
+        .then(result => {
+            pool.close();
+            return result.recordset;
+        })
+        return user
+    }catch(err){
+        return
+    }
+}
 
 const getItems = async (id) => {
     await prisma.deleteAll()
@@ -92,5 +110,6 @@ const startTransaction = async (pool,rec,length,arr,name,time,note) => {
 
 module.exports = {
     getItems,
-    sendToSql
+    sendToSql,
+    getUser
 }
