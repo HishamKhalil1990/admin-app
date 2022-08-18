@@ -5,6 +5,7 @@ const sql = require('./sql')
 
 // enviroment variables
 const USERS_TABLE = process.env.USERS_TABLE
+const USERS_WHS_TABLE = process.env.USERS_WHS_TABLE
 
 const getUser = async (username,password) => {
     try{
@@ -15,6 +16,20 @@ const getUser = async (username,password) => {
             return result.recordset;
         })
         return user
+    }catch(err){
+        return
+    }
+}
+
+const getWhsInfo = async () => {
+    try{
+        const pool = await sql.getSQL();
+        const whsCode = await pool.request().query(`select * from ${USERS_WHS_TABLE}`)
+        .then(result => {
+            pool.close();
+            return result.recordset;
+        })
+        return whsCode
     }catch(err){
         return
     }
@@ -111,5 +126,6 @@ const startTransaction = async (pool,rec,length,arr,name,time,note) => {
 module.exports = {
     getItems,
     sendToSql,
-    getUser
+    getUser,
+    getWhsInfo
 }

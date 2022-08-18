@@ -27,6 +27,17 @@ const logOut = (req,res) => {
     res.render('routing')
 }
 
+const changeAllow = async (req,res) => {
+    const {type,id} = req.params
+    console.log(type,id)
+    if(req.session.loggedin)
+    {
+        res.send('done')
+    }else{
+        res.send('error')
+    }
+}
+
 const choosePage = async (req,res) => {
     if(req.session.loggedin)
     {
@@ -59,6 +70,15 @@ const getWhs = async (req,res) => {
     const whs = await hana.getwarehouseList()
     if(whs != 'error'){
         res.send(whs)
+    }else{
+        res.send('error')
+    }
+}
+
+const getWhsOnfo = async (req,res) => {
+    const info = await functions.getWhsInfo()
+    if(info){
+        res.send(info)
     }else{
         res.send('error')
     }
@@ -139,5 +159,7 @@ module.exports = {
     openReqPage,
     choosePage,
     validate,
-    logOut
+    logOut,
+    getWhsOnfo,
+    changeAllow
 }
