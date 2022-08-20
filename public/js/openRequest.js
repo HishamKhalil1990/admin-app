@@ -13,12 +13,12 @@ const getInfo = () => {
             data.forEach(whs => {
                 if(whs.Allowed == "0"){
                     notAllowedWhs.push({
-                        name:`${whs.WarehouseName} - ${whs.Username}`,
+                        name:`${whs.WarehouseName} / (${whs.Username})`,
                         code:whs.Username
                     })
                 }else{
                     allowedWhs.push({
-                        name:`${whs.WarehouseName} - ${whs.Username}`,
+                        name:`${whs.WarehouseName} / (${whs.Username})`,
                         code:whs.Username
                     })
                 }
@@ -40,7 +40,12 @@ const getInfo = () => {
                 change("open")
             })
         }else{
-            alert(`لا يوجد اتصال بالانترنت`)
+            $('#closed').empty()
+            $('#opend').empty()
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
         }
     })
 }
@@ -74,8 +79,10 @@ const change = (type) => {
                     }, 200)
                 }else{
                     hideModal("spinner")
-                    alert(`لا يوجد اتصال بالانترنت`)
-                }
+                    showModal('noEnternet')
+                    setTimeout(() => {
+                        hideModal("noEnternet")
+                    },1500)}
             })
         }
     }else{
@@ -91,8 +98,10 @@ const change = (type) => {
                     }, 200)
                 }else{
                     hideModal("spinner")
-                    alert(`لا يوجد اتصال بالانترنت`)
-                }
+                    showModal('noEnternet')
+                    setTimeout(() => {
+                        hideModal("noEnternet")
+                    },1500)}
             })
         }
     }
@@ -113,6 +122,9 @@ const showModal = (type) => {
         case "spinner":
             $(".modal_spinner_container").attr("style", "display:flex;height: 100%;width: 100%;");
             break;
+        case "noEnternet":
+            $(".modal_notAllowed_container").attr("style", "display:flex;");
+            break;
         default:
             break;
     }
@@ -125,7 +137,10 @@ const showModal = (type) => {
         case "spinner":
             $(".modal_spinner_container").attr("style", "display:none;");
             break;
-      default:
+        case "noEnternet":
+            $(".modal_notAllowed_container").attr("style", "display:none;");
+            break;
+        default:
             break;
     }
   };

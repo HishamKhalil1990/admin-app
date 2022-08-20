@@ -12,8 +12,11 @@ $(document).ready(() => {
             $('#selectPlace').html(select)
             $('#selectWhs').html(opts)
         }else{
-            $('#selectPlace').html()
-            alert(`لا يوجد اتصال بالانترنت`)
+            $('#selectPlace').empty()
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
         }
     })
     $('#btuSearch').on('click',() => {
@@ -126,11 +129,14 @@ const goAndSearch = () => {
         if((data != "error") && (data != "noData")){
             createTable(data)
         }else if(data == "error"){
-            $('#tablePlace').html()
+            $('#tablePlace').empty()
             alert('حصل خطا داخلي الرجاء المحاولة مرة اخرى')
         }else if(data == "noData"){
-            $('#tablePlace').html()
-            alert(`لا يوجد اتصال بالانترنت`)
+            $('#tablePlace').empty()
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
         }
     })
 }
@@ -153,6 +159,7 @@ const goAndAdd = () => {
 const goAndSend = () => {
     const name = $('#addName')[0].value
     const date = $('#addDate')[0].value
+    console.log(`/send/${date}/${name}/${note}`)
     $.post(`/send/${date}/${name}/${note}`).then((msg) => {
         if(msg == 'done'){
             hideModal("spinner");
@@ -161,8 +168,13 @@ const goAndSend = () => {
                 refreshPage()
             },100)
         }else if(msg == 'error'){
-            alert(`لا يوجد اتصال بالانترنت`)
+            hideModal("spinner");
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
         }else if(msg == 'noData'){
+            hideModal("spinner");
             alert(`لا يوجد بيانات للارسال`)
         }
     })
@@ -179,8 +191,11 @@ const showModal = (type) => {
       case "notes":
         $(".modal_notes_container").attr("style", "display:flex;");
         break;
-    case "spinner":
+      case "spinner":
         $(".modal_spinner_container").attr("style", "display:flex;");
+        break;
+      case "noEnternet":
+        $(".modal_notAllowed_container").attr("style", "display:flex;");
         break;
       default:
         break;
@@ -194,8 +209,11 @@ const showModal = (type) => {
       case "notes":
         $(".modal_notes_container").attr("style", "display:none;");
         break;
-    case "spinner":
+      case "spinner":
         $(".modal_spinner_container").attr("style", "display:none;");
+        break;
+      case "noEnternet":
+        $(".modal_notAllowed_container").attr("style", "display:none;");
         break;
       default:
         break;
