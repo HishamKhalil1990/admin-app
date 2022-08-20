@@ -29,10 +29,10 @@ const logOut = (req,res) => {
 
 const changeAllow = async (req,res) => {
     const {type,id} = req.params
-    console.log(type,id)
     if(req.session.loggedin)
     {
-        res.send('done')
+        const msg = await functions.updateWhsInfo(type,id)
+        res.send(msg)
     }else{
         res.send('error')
     }

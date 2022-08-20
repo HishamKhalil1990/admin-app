@@ -10,17 +10,16 @@ const getInfo = () => {
         if(data != "error"){
             const allowedWhs = []
             const notAllowedWhs = []
-            console.log(data)
             data.forEach(whs => {
                 if(whs.Allowed == "0"){
                     notAllowedWhs.push({
-                        name:whs.WarehouseName,
-                        code:whs.WhsCode
+                        name:`${whs.WarehouseName} - ${whs.Username}`,
+                        code:whs.Username
                     })
                 }else{
                     allowedWhs.push({
-                        name:whs.WarehouseName,
-                        code:whs.WhsCode
+                        name:`${whs.WarehouseName} - ${whs.Username}`,
+                        code:whs.Username
                     })
                 }
             })
@@ -41,8 +40,6 @@ const getInfo = () => {
                 change("open")
             })
         }else{
-            $('#closed').html()
-            $('#opend').html()
             alert(`لا يوجد اتصال بالانترنت`)
         }
     })
@@ -58,13 +55,13 @@ const getOptions = (data) => {
 
 const change = (type) => {
     const openedOption = $('#opendWhs').find(":selected")
-    const closedOption = $('#closed').find(":selected")
+    const closedOption = $('#closedWhs').find(":selected")
     let id;
     if(type != "open"){
-        if(closedOption[0]){
+        if(openedOption[0]){
             showModal("spinner")
             if(type == "close"){
-                id = closedOption[0].id
+                id = openedOption[0].id
             }else{
                 id = "null"
             }
@@ -76,14 +73,15 @@ const change = (type) => {
                         refresh()
                     }, 200)
                 }else{
+                    hideModal("spinner")
                     alert(`لا يوجد اتصال بالانترنت`)
                 }
             })
         }
     }else{
-        if(openedOption[0]){
+        if(closedOption[0]){
             showModal("spinner")
-            id = openedOption[0].id
+            id = closedOption[0].id
             $.post(`/change-allow/${type}/${id}`)
             .then((msg) => {
                 if(msg == "done"){
@@ -92,6 +90,7 @@ const change = (type) => {
                         refresh()
                     }, 200)
                 }else{
+                    hideModal("spinner")
                     alert(`لا يوجد اتصال بالانترنت`)
                 }
             })

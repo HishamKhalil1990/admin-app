@@ -35,6 +35,29 @@ const getWhsInfo = async () => {
     }
 }
 
+const updateWhsInfo = async (type,id) => {
+    const statements = {
+        open:`update ${USERS_WHS_TABLE} set Allowed = 1 where Username = '${id}'`,
+        close:`update ${USERS_WHS_TABLE} set Allowed = 0 where Username = '${id}'`,
+        closeAll:`update ${USERS_WHS_TABLE} set Allowed = 0 where Allowed = 1`,
+    }
+    try{
+        const pool = await sql.getSQL();
+        const whsCode = await pool.request().query(statements[`${type}`])
+        .then(result => {
+            pool.close();
+            if(result.rowsAffected.length > 0){
+                return 'done'
+            }else{
+                return 'error';
+            }
+        })
+        return whsCode
+    }catch(err){
+        return 'error'
+    }
+}
+
 const getItems = async (id) => {
     await prisma.deleteAll()
     const records = await hana.getItems(id)
@@ -55,21 +78,29 @@ const sendToSql = async (name,time,data,note) => {
         const start = async () => {
             try{
                 const pool = await sql.getSQL()
+                let quit = false
+                if(!pool){
+                    quit = true
+                }
                 const length = data.length
                 const arr = []
-                const quit = false
-                for(let i = 0; i < data.length; i++){
-                    const rec = data[i]
-                    startTransaction(pool,rec,length,arr,name,time,note)
-                    .then(() => {
-                        resolve()
-                    })
-                    .catch((err) => {
-                        quit = true
-                    })
-                    if(quit){
-                        reject()
+                if(!quit){
+                    for(let i = 0; i < data.length; i++){
+                        const rec = data[i]
+                        startTransaction(pool,rec,length,arr,name,time,note)
+                        .then(() => {
+                            resolve()
+                        })
+                        .catch((err) => {
+                            quit = true
+                        })
+                        if(quit){
+                            break;
+                        }
                     }
+                }
+                if(quit){
+                    reject()
                 }
             }catch(err){
                 reject()
@@ -82,44 +113,48 @@ const sendToSql = async (name,time,data,note) => {
 const startTransaction = async (pool,rec,length,arr,name,time,note) => {
     const transaction = await sql.getTransaction(pool);
     return new Promise((resolve,reject) => {
-        transaction.begin((err) => {
-            if(err){
-                console.log(err)
-                reject()
-            }
-            pool.request()
-            .input("CountingName",name)
-            .input("CountingDate",time)
-            .input("ItemCode",rec.ItemCode)
-            .input("ItemName",rec.ItemName)
-            .input("UnitMsr",rec.BuyUnitMsr)
-            .input("WhsCode",rec.WhsCode)
-            .input("CodeBars",rec.CodeBars)
-            .input("Note",note)
-            .execute("Sp_Add_InventoryCountingRequest",(err,result) => {
+        try{
+            transaction.begin((err) => {
                 if(err){
-                    console.log('excute',err)
+                    console.log("pool",err)
                     reject()
                 }
-                transaction.commit((err) => {
+                pool.request()
+                .input("CountingName",name)
+                .input("CountingDate",time)
+                .input("ItemCode",rec.ItemCode)
+                .input("ItemName",rec.ItemName)
+                .input("UnitMsr",rec.BuyUnitMsr)
+                .input("WhsCode",rec.WhsCode)
+                .input("CodeBars",rec.CodeBars)
+                .input("Note",note)
+                .execute("Sp_Add_InventoryCountingRequest",(err,result) => {
                     if(err){
-                        console.log('transaction error : ',err)
+                        console.log('excute',err)
                         reject()
                     }
-                    console.log("Transaction committed.");
-                    prisma.updateSelectBulk(rec.id,false,0,arr)
-                    .then(() => {
-                        if(arr.length == length){
-                            pool.close();
-                            resolve();
+                    transaction.commit((err) => {
+                        if(err){
+                            console.log('transaction error : ',err)
+                            reject()
                         }
-                    })
-                    .catch(err => {
-                        reject()
-                    })
-                });
+                        console.log("Transaction committed.");
+                        prisma.updateSelectBulk(rec.id,false,0,arr)
+                        .then(() => {
+                            if(arr.length == length){
+                                pool.close();
+                                resolve();
+                            }
+                        })
+                        .catch(err => {
+                            reject()
+                        })
+                    });
+                })
             })
-        })
+        }catch(err){
+            reject()
+        }
     })
 }
 
@@ -127,5 +162,6 @@ module.exports = {
     getItems,
     sendToSql,
     getUser,
-    getWhsInfo
+    getWhsInfo,
+    updateWhsInfo
 }
