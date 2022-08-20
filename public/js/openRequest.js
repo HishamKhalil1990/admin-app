@@ -14,12 +14,14 @@ const getInfo = () => {
                 if(whs.Allowed == "0"){
                     notAllowedWhs.push({
                         name:`${whs.WarehouseName} / (${whs.Username})`,
-                        code:whs.Username
+                        code:whs.Username,
+                        email:whs.WhsEmail
                     })
                 }else{
                     allowedWhs.push({
                         name:`${whs.WarehouseName} / (${whs.Username})`,
-                        code:whs.Username
+                        code:whs.Username,
+                        email:whs.WhsEmail
                     })
                 }
             })
@@ -53,7 +55,7 @@ const getInfo = () => {
 const getOptions = (data) => {
     let opts = ''
     data.forEach(opt => {
-        opts += `<option id=${opt.code}>${opt.name}</option>`
+        opts += `<option id=${opt.code}-${opt.email}>${opt.name}</option>`
     })
     return opts
 }
@@ -62,15 +64,19 @@ const change = (type) => {
     const openedOption = $('#opendWhs').find(":selected")
     const closedOption = $('#closedWhs').find(":selected")
     let id;
+    let email;
     if(type != "open"){
         if(openedOption[0]){
             showModal("spinner")
             if(type == "close"){
-                id = openedOption[0].id
+                const arr = openedOption[0].id.split('-')
+                id = arr[0]
+                email = arr[1]
             }else{
                 id = "null"
+                email = "null"
             }
-            $.post(`/change-allow/${type}/${id}`)
+            $.post(`/change-allow/${type}/${id}/${email}`)
             .then((msg) => {
                 if(msg == "done"){
                     setTimeout(() => {
@@ -88,8 +94,10 @@ const change = (type) => {
     }else{
         if(closedOption[0]){
             showModal("spinner")
-            id = closedOption[0].id
-            $.post(`/change-allow/${type}/${id}`)
+            const arr = closedOption[0].id.split('-')
+            id = arr[0]
+            email = arr[1]
+            $.post(`/change-allow/${type}/${id}/${email}`)
             .then((msg) => {
                 if(msg == "done"){
                     setTimeout(() => {

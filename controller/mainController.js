@@ -28,10 +28,10 @@ const logOut = (req,res) => {
 }
 
 const changeAllow = async (req,res) => {
-    const {type,id} = req.params
+    const {type,id,email} = req.params
     if(req.session.loggedin)
     {
-        const msg = await functions.updateWhsInfo(type,id)
+        const msg = await functions.updateWhsInfo(type,id,email)
         res.send(msg)
     }else{
         res.send('error')
@@ -75,6 +75,17 @@ const getWhs = async (req,res) => {
     }
 }
 
+const getUsers = async (req,res) => {
+    const { id } = req.params
+    const users = await functions.getUseres(id)
+    if(users != 'error'){
+        req.session.users = users
+        res.send(users)
+    }else{
+        res.send('error')
+    }
+}
+
 const getWhsOnfo = async (req,res) => {
     const info = await functions.getWhsInfo()
     if(info){
@@ -111,14 +122,22 @@ const getReport = async(req,res) => {
 }
 
 const sendData = async (req,res) => {
-    const {date,name,note} = req.params
+    const {date,name,note,user} = req.params
     const time = new Date(date).toISOString()
     try{
         const data = await prisma.findReport()
         if(data.length > 0){
-            await functions.sendToSql(name,time,data,note)
+            await functions.sendToSql(name,time,data,note,user)
             .then(() => {
                 res.send('done')
+                const users = req.session.users
+                for(let i = 0; i < users.length; i++){
+                    if(users[0].Username == user){
+                        const value = parseInt(users[0].CountingAvailable) + 1
+                        functions.updateWhsInfo('count',user,value);
+                        break;
+                    }
+                }
             })
             .catch(() => {
                 res.send('error')
@@ -161,5 +180,6 @@ module.exports = {
     validate,
     logOut,
     getWhsOnfo,
-    changeAllow
+    changeAllow,
+    getUsers
 }

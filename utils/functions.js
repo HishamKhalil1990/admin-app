@@ -2,10 +2,12 @@ require('dotenv').config();
 const prisma = require('./prismaDB')
 const hana = require('./hana')
 const sql = require('./sql')
+const sendEmail = require('./email')
 
 // enviroment variables
 const USERS_TABLE = process.env.USERS_TABLE
 const USERS_WHS_TABLE = process.env.USERS_WHS_TABLE
+const COUNTING_REQUEST_PROCDURE = process.env.COUNTING_REQUEST_PROCDURE
 
 const getUser = async (username,password) => {
     try{
@@ -35,11 +37,26 @@ const getWhsInfo = async () => {
     }
 }
 
-const updateWhsInfo = async (type,id) => {
+const getUseres = async (whs) => {
+    try{
+        const pool = await sql.getSQL();
+        const whsCode = await pool.request().query(`select * from ${USERS_WHS_TABLE} where WhsCode = '${whs}'`)
+        .then(result => {
+            pool.close();
+            return result.recordset;
+        })
+        return whsCode
+    }catch(err){
+        return 'error'
+    }
+}
+
+const updateWhsInfo = async (type,id,value) => {
     const statements = {
         open:`update ${USERS_WHS_TABLE} set Allowed = 1 where Username = '${id}'`,
         close:`update ${USERS_WHS_TABLE} set Allowed = 0 where Username = '${id}'`,
         closeAll:`update ${USERS_WHS_TABLE} set Allowed = 0 where Allowed = 1`,
+        count:`update ${USERS_WHS_TABLE} set CountingAvailable = ${value} where Username = '${id}'`,
     }
     try{
         const pool = await sql.getSQL();
@@ -47,6 +64,23 @@ const updateWhsInfo = async (type,id) => {
         .then(result => {
             pool.close();
             if(result.rowsAffected.length > 0){
+                if(type == 'open'){
+                    const start = async () => {
+                        const text = 'لقد تم الموافقة على طلبك لعمل طلبية بضاعة في غير وقتها المحدد'
+                        const subject = 'رد السماح بعمل طلبية'
+                        const toEmail = value
+                        await sendEmail(text,subject,toEmail)
+                    }
+                    start()
+                }else if(type == 'close'){
+                    const start = async () => {
+                        const text = 'لقد تم الغاء الموافقة المسبقة لعمل طلبية بضاعة في غير وقتها'
+                        const subject = 'رد السماح بعمل طلبية'
+                        const toEmail = value
+                        await sendEmail(text,subject,toEmail)
+                    }
+                    start()
+                }
                 return 'done'
             }else{
                 return 'error';
@@ -73,7 +107,7 @@ const getItems = async (id) => {
     }
 }
 
-const sendToSql = async (name,time,data,note) => {
+const sendToSql = async (name,time,data,note,user) => {
     return new Promise((resolve,reject) => {
         const start = async () => {
             try{
@@ -87,7 +121,7 @@ const sendToSql = async (name,time,data,note) => {
                 if(!quit){
                     for(let i = 0; i < data.length; i++){
                         const rec = data[i]
-                        startTransaction(pool,rec,length,arr,name,time,note)
+                        startTransaction(pool,rec,length,arr,name,time,note,user)
                         .then(() => {
                             resolve()
                         })
@@ -110,7 +144,8 @@ const sendToSql = async (name,time,data,note) => {
     })
 }
 
-const startTransaction = async (pool,rec,length,arr,name,time,note) => {
+const startTransaction = async (pool,rec,length,arr,name,time,note,user) => {
+    console.log(user)
     const transaction = await sql.getTransaction(pool);
     return new Promise((resolve,reject) => {
         try{
@@ -128,7 +163,7 @@ const startTransaction = async (pool,rec,length,arr,name,time,note) => {
                 .input("WhsCode",rec.WhsCode)
                 .input("CodeBars",rec.CodeBars)
                 .input("Note",note)
-                .execute("Sp_Add_InventoryCountingRequest",(err,result) => {
+                .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
                     if(err){
                         console.log('excute',err)
                         reject()
@@ -163,5 +198,6 @@ module.exports = {
     sendToSql,
     getUser,
     getWhsInfo,
-    updateWhsInfo
+    updateWhsInfo,
+    getUseres
 }

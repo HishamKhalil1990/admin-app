@@ -1,4 +1,5 @@
 const select = `<select name="warehouse" id="selectWhs"></select>`
+const selectUsers = `<select name="users" id="selectUsers"></select>`
 const buttons = `<button id="btuSubmit" class="btu">ارسال</button><button id="btuClose" class="btu">اغلاق</button>`
 const spinner = `<div id="spinnerOutter"><div id="spinnerInner" ><div class="lds-ring"><div></div><div></div><div></div><div></div></div></div></div>` 
 let reportOpened = false
@@ -11,6 +12,11 @@ $(document).ready(() => {
             const opts = getOptions(data)
             $('#selectPlace').html(select)
             $('#selectWhs').html(opts)
+            $('#selectWhs').change(() => {
+                $('#selectUsername').html(spinner)
+                getUsernames()
+            })
+            getUsernames()
         }else{
             $('#selectPlace').empty()
             showModal('noEnternet')
@@ -159,8 +165,9 @@ const goAndAdd = () => {
 const goAndSend = () => {
     const name = $('#addName')[0].value
     const date = $('#addDate')[0].value
-    console.log(`/send/${date}/${name}/${note}`)
-    $.post(`/send/${date}/${name}/${note}`).then((msg) => {
+    const option = $('#selectUsers').find(":selected")
+    const user = option[0].id
+    $.post(`/send/${date}/${name}/${note}/${user}`).then((msg) => {
         if(msg == 'done'){
             hideModal("spinner");
             setTimeout(() => {
@@ -258,3 +265,30 @@ const removeAll = () => {
         }
     })
   }
+
+  const getUsernames = () => {
+    const option = $('#selectWhs').find(":selected")
+    const id = option[0].id
+    $.post(`/users/${id}`)
+    .then((data) => {
+        if(data == 'error'){
+            $('#selectUsername').empty()
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
+        }else{
+            const opts = getUserOptions(data)
+            $('#selectUsername').html(selectUsers)
+            $('#selectUsers').html(opts)
+        }
+    })
+  }
+
+  const getUserOptions = (data) => {
+    let opts = ''
+    data.forEach(opt => {
+        opts += `<option id=${opt.Username}>${opt.Username}</option>`
+    })
+    return opts
+}
