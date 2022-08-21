@@ -1,0 +1,95 @@
+html,body {
+    height: 100%;
+    width:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#outterContainer{
+    height: 80%;
+    width:80%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card{
+    height: 40%;
+    width: 40%;
+    box-shadow: 0px 6px 18px 0px #585858;
+    border-radius: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.innerContainer{
+    height: 60%;
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.options{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.select{
+    height: 30%;
+    width:90%;
+    font-size: 25px;
+}
+
+#openOutBtuDiv{
+    height: 30%;
+    width:90%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#closeOutBtuDiv{
+    height: 30%;
+    width:90%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.btu{
+    height: 40px;
+    border: #fff;
+    border-radius: 5px;
+    width: 40%;
+    background-color: #04AA6D;
+    color: #fff;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btu:hover{
+    border:solid#04AA6D;
+    border-width: 2px;
+    background-color: #fff;
+    color: #04AA6D;
+    
+}
+
+#modal-spinner{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

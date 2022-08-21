@@ -1,4 +1,5 @@
 const select = `<select name="warehouse" id="selectWhs"></select>`
+const selectUsers = `<select name="users" id="selectUsers"></select>`
 const buttons = `<button id="btuSubmit" class="btu">ارسال</button><button id="btuClose" class="btu">اغلاق</button>`
 const spinner = `<div id="spinnerOutter"><div id="spinnerInner" ><div class="lds-ring"><div></div><div></div><div></div><div></div></div></div></div>` 
 let reportOpened = false
@@ -11,9 +12,17 @@ $(document).ready(() => {
             const opts = getOptions(data)
             $('#selectPlace').html(select)
             $('#selectWhs').html(opts)
+            $('#selectWhs').change(() => {
+                $('#selectUsername').html(spinner)
+                getUsernames()
+            })
+            getUsernames()
         }else{
-            $('#selectPlace').html()
-            alert(`لا يوجد اتصال بالانترنت`)
+            $('#selectPlace').empty()
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
         }
     })
     $('#btuSearch').on('click',() => {
@@ -61,6 +70,17 @@ $(document).ready(() => {
             removeAll()
         }
     })
+    $('#goBackBtu').on('click',()=>{
+        const data = `<div><a style="color: white;" href="/choose" id="goChoose">press</a></div>`
+        goDirect('goChoose',data)
+    });
+    $('#goHomeBtu').on('click',()=>{
+        const data = `<div><a style="color: white;" href="/choose" id="goChoose">press</a></div>`
+        goDirect('goChoose',data)
+    });
+    $('#refresh').on('click',()=>{
+        location.reload();
+    });  
 })
 
 const getOptions = (data) => {
@@ -126,11 +146,14 @@ const goAndSearch = () => {
         if((data != "error") && (data != "noData")){
             createTable(data)
         }else if(data == "error"){
-            $('#tablePlace').html()
+            $('#tablePlace').empty()
             alert('حصل خطا داخلي الرجاء المحاولة مرة اخرى')
         }else if(data == "noData"){
-            $('#tablePlace').html()
-            alert(`لا يوجد اتصال بالانترنت`)
+            $('#tablePlace').empty()
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
         }
     })
 }
@@ -153,7 +176,9 @@ const goAndAdd = () => {
 const goAndSend = () => {
     const name = $('#addName')[0].value
     const date = $('#addDate')[0].value
-    $.post(`/send/${date}/${name}/${note}`).then((msg) => {
+    const option = $('#selectUsers').find(":selected")
+    const user = option[0].id
+    $.post(`/send/${date}/${name}/${note}/${user}`).then((msg) => {
         if(msg == 'done'){
             hideModal("spinner");
             setTimeout(() => {
@@ -161,8 +186,13 @@ const goAndSend = () => {
                 refreshPage()
             },100)
         }else if(msg == 'error'){
-            alert(`لا يوجد اتصال بالانترنت`)
+            hideModal("spinner");
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
         }else if(msg == 'noData'){
+            hideModal("spinner");
             alert(`لا يوجد بيانات للارسال`)
         }
     })
@@ -179,8 +209,11 @@ const showModal = (type) => {
       case "notes":
         $(".modal_notes_container").attr("style", "display:flex;");
         break;
-    case "spinner":
+      case "spinner":
         $(".modal_spinner_container").attr("style", "display:flex;");
+        break;
+      case "noEnternet":
+        $(".modal_notAllowed_container").attr("style", "display:flex;");
         break;
       default:
         break;
@@ -194,8 +227,11 @@ const showModal = (type) => {
       case "notes":
         $(".modal_notes_container").attr("style", "display:none;");
         break;
-    case "spinner":
+      case "spinner":
         $(".modal_spinner_container").attr("style", "display:none;");
+        break;
+      case "noEnternet":
+        $(".modal_notAllowed_container").attr("style", "display:none;");
         break;
       default:
         break;
@@ -240,3 +276,36 @@ const removeAll = () => {
         }
     })
   }
+
+  const getUsernames = () => {
+    const option = $('#selectWhs').find(":selected")
+    const id = option[0].id
+    $.post(`/users/${id}`)
+    .then((data) => {
+        if(data == 'error'){
+            $('#selectUsername').empty()
+            showModal('noEnternet')
+            setTimeout(() => {
+                hideModal("noEnternet")
+            },1500)
+        }else{
+            const opts = getUserOptions(data)
+            $('#selectUsername').html(selectUsers)
+            $('#selectUsers').html(opts)
+        }
+    })
+  }
+
+  const getUserOptions = (data) => {
+    let opts = ''
+    data.forEach(opt => {
+        opts += `<option id=${opt.Username}>${opt.Username}</option>`
+    })
+    return opts
+}
+
+const goDirect = (page,data) => {
+    $('#body').html(data)
+    document.getElementById(`${page}`).click();
+  }
+  

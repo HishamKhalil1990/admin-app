@@ -4,14 +4,17 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/count.css" />
     <link rel="stylesheet" href="/css/spinner.css" />
     <link rel="stylesheet" href="/css/modal.css" />
     <script src="/js/jquery.min.js"></script>
-    <script src="/js/main.js"></script>
-    <title>Admin</title>
+    <script src="/js/count.js"></script>
+    <title>طلب الجرد</title>
   </head>
-  <body>
+  <body id="body">
+    <div>
+      <%- include("partials/navigationBtu") %>
+    </div>
     <div style="position:relative;">
       <div id="reportDiv" style="position:absolute;right:0px;top:115px;z-index: 3;"></div>
     </div>
@@ -36,6 +39,23 @@
                 </div>
               </div>
             </div>
+            <div class="entry" id="username">
+              <div>
+                <label
+                  style="display: inline; margin-bottom: 0; font-size: 14px"
+                  for="username"
+                  >المسؤول</label
+                >
+              </div>
+              <div id="selectUsername">
+                <div class="lds-ring">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
+              </div>
+            </div>
             <div class="entry" id="button">
               <button id="btuSearch" class="btu">بحث</button>
             </div>
@@ -47,6 +67,7 @@
               >
               <input class="input" id="addDate" name="date" type="date" />
             </div>
+            <div class="entry" id="nothing"></div>
             <div class="entry" id="name">
               <div class="leftInputs">
                 <label

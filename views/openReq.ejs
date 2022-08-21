@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/openRequest.css"/>
+    <link rel="stylesheet" href="/css/spinner.css" />
+    <link rel="stylesheet" href="/css/modal.css" />
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/openRequest.js"></script>
+    <title>السماح باجراء طلب</title>
+</head>
+<body id="body">
+    <div>
+        <%- include("partials/navigationBtu") %>
+      </div>
+    <div id="outterContainer">
+        <div class="card">
+            <div class="innerContainer" id="closed">
+                <div class="lds-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="innerContainer" id="opend">
+                <div class="lds-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <%- include("partials/modal") %>
+    </div>
+</body>
+</html>
