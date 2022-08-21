@@ -5,6 +5,9 @@ const hana = require("@sap/hana-client");
 const HANA_HOST = process.env.HANA_HOST;
 const HANA_USER = process.env.HANA_USER;
 const HANA_PASSWORD = process.env.HANA_PASSWORD;
+const HANA_DATABASE = process.env.HANA_DATABASE;
+const HANA_STOCK_PROCDURE = process.env.HANA_STOCK_PROCDURE;
+const HANA_WAHREHOUSES = process.env.HANA_WAHREHOUSES;
 
 const hanaConfig = {
   serverNode: `${HANA_HOST}:30015`,
@@ -16,12 +19,12 @@ const hanaConfig = {
 const connection = hana.createConnection();
 
 const getItems = async (whs) => {
-  const procedureStatment = `CALL "RAYHAN_NEW"."SP_DIPS_StockReq" ('${whs}')`;
+  const procedureStatment = `CALL "${HANA_DATABASE}"."${HANA_STOCK_PROCDURE}" ('${whs}')`;
   return execute(procedureStatment).catch(() => {return 'error'});
 };
 
 const getwarehouseList = async () => {
-  const procedureStatment = `CALL "RAYHAN_NEW"."WareHouse"`;
+  const procedureStatment = `CALL "${HANA_DATABASE}"."${HANA_WAHREHOUSES}"`;
   return execute(procedureStatment).catch(() => {return 'error'});
 };
 

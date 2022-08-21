@@ -24,7 +24,7 @@ const validate = async (req,res) => {
 const logOut = (req,res) => {
     req.session.loggedin = false
     req.session.username = undefined
-    res.render('routing')
+    res.redirect('/')
 }
 
 const changeAllow = async (req,res) => {

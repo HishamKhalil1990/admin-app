@@ -70,6 +70,17 @@ $(document).ready(() => {
             removeAll()
         }
     })
+    $('#goBackBtu').on('click',()=>{
+        const data = `<div><a style="color: white;" href="/choose" id="goChoose">press</a></div>`
+        goDirect('goChoose',data)
+    });
+    $('#goHomeBtu').on('click',()=>{
+        const data = `<div><a style="color: white;" href="/choose" id="goChoose">press</a></div>`
+        goDirect('goChoose',data)
+    });
+    $('#refresh').on('click',()=>{
+        location.reload();
+    });  
 })
 
 const getOptions = (data) => {
@@ -292,3 +303,9 @@ const removeAll = () => {
     })
     return opts
 }
+
+const goDirect = (page,data) => {
+    $('#body').html(data)
+    document.getElementById(`${page}`).click();
+  }
+  

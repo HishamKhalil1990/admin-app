@@ -3,6 +3,17 @@ const openedSelect = `<div class="options"><select class="select" id="opendWhs">
 const closedSelect = `<div class="options"><select class="select" id="closedWhs"></select><div id="closeOutBtuDiv"><div class="btu" id="openBtu">Open</div></div></div>`
 $(document).ready(() => {
     getInfo()
+    $('#goBackBtu').on('click',()=>{
+        const data = `<div><a style="color: white;" href="/choose" id="goChoose">press</a></div>`
+        goDirect('goChoose',data)
+    });
+    $('#goHomeBtu').on('click',()=>{
+        const data = `<div><a style="color: white;" href="/choose" id="goChoose">press</a></div>`
+        goDirect('goChoose',data)
+    });
+    $('#refresh').on('click',()=>{
+        location.reload();
+    });  
 })
 
 const getInfo = () => {
@@ -152,3 +163,9 @@ const showModal = (type) => {
             break;
     }
   };
+
+  const goDirect = (page,data) => {
+    $('#body').html(data)
+    document.getElementById(`${page}`).click();
+  }
+  
