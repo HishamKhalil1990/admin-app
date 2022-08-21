@@ -145,7 +145,6 @@ const sendToSql = async (name,time,data,note,user) => {
 }
 
 const startTransaction = async (pool,rec,length,arr,name,time,note,user) => {
-    console.log(user)
     const transaction = await sql.getTransaction(pool);
     return new Promise((resolve,reject) => {
         try{
@@ -163,6 +162,7 @@ const startTransaction = async (pool,rec,length,arr,name,time,note,user) => {
                 .input("WhsCode",rec.WhsCode)
                 .input("CodeBars",rec.CodeBars)
                 .input("Note",note)
+                .input("UserName",user)
                 .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
                     if(err){
                         console.log('excute',err)
