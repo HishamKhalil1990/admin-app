@@ -132,8 +132,8 @@ const sendData = async (req,res) => {
                 res.send('done')
                 const users = req.session.users
                 for(let i = 0; i < users.length; i++){
-                    if(users[0].Username == user){
-                        const value = parseInt(users[0].CountingAvailable) + 1
+                    if(users[i].Username == user){
+                        const value = parseInt(users[i].CountingAvailable) + 1
                         functions.updateWhsInfo('count',user,value);
                         break;
                     }
