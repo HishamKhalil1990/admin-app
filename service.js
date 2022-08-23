@@ -5,9 +5,10 @@ var svc = new Service({
   name:'Admin app',
   description: 'Admin app for counting request',
   script: 'C:\\admin-app\\bin\\www',
+  // execPath: 'C:\\Program Files\\nodejs',
   nodeOptions: [
     '--harmony',
-    '--max_old_space_size=4096'
+    '--max_old_space_size=8096'
   ]
   //, workingDirectory: '...'
   //, allowServiceLogon: true
