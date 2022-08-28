@@ -22,9 +22,12 @@ const validate = async (req,res) => {
 }
 
 const logOut = (req,res) => {
-    req.session.loggedin = false
-    req.session.username = undefined
-    res.redirect('/')
+    // req.session.loggedin = false
+    // req.session.username = undefined
+    // res.redirect('/')
+    req.session.destroy(function(err) {
+        res.redirect('/')
+    })
 }
 
 const changeAllow = async (req,res) => {
