@@ -9,7 +9,9 @@ const createRecords = async (records) => {
             ItemName:rec.ItemName,
             CodeBars:rec.CodeBars != null? rec.CodeBars : undefined,
             WhsCode:rec.WhsCode,
-            BuyUnitMsr:rec.BuyUnitMsr != null? rec.BuyUnitMsr : undefined
+            BuyUnitMsr:rec.BuyUnitMsr != null? rec.BuyUnitMsr : undefined,
+            Price:rec.Price,
+            ScaleType:rec.ScaleType
         }
     })
     return await create(mappedRecs)

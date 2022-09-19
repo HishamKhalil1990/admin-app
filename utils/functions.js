@@ -164,6 +164,8 @@ const startTransaction = async (pool,rec,length,arr,name,time,note,user) => {
                 .input("Note",note)
                 .input("UserName",user)
                 .input("SAP_Processed",2)
+                .input("Price",rec.Price)
+                .input("ScaleType",rec.ScaleType)
                 .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
                     if(err){
                         console.log('excute',err)
