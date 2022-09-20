@@ -107,7 +107,7 @@ const getItems = async (id) => {
     }
 }
 
-const sendToSql = async (name,time,data,note,user) => {
+const sendToSql = async (name,time,data,note,user,docNo) => {
     return new Promise((resolve,reject) => {
         const start = async () => {
             try{
@@ -121,7 +121,7 @@ const sendToSql = async (name,time,data,note,user) => {
                 if(!quit){
                     for(let i = 0; i < data.length; i++){
                         const rec = data[i]
-                        startTransaction(pool,rec,length,arr,name,time,note,user)
+                        startTransaction(pool,rec,length,arr,name,time,note,user,docNo)
                         .then(() => {
                             resolve()
                         })
@@ -144,7 +144,7 @@ const sendToSql = async (name,time,data,note,user) => {
     })
 }
 
-const startTransaction = async (pool,rec,length,arr,name,time,note,user) => {
+const startTransaction = async (pool,rec,length,arr,name,time,note,user,docNo) => {
     const transaction = await sql.getTransaction(pool);
     return new Promise((resolve,reject) => {
         try{
@@ -166,6 +166,7 @@ const startTransaction = async (pool,rec,length,arr,name,time,note,user) => {
                 .input("SAP_Processed",2)
                 .input("Price",rec.Price)
                 .input("ScaleType",rec.ScaleType)
+                .input("DocNO",docNo)
                 .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
                     if(err){
                         console.log('excute',err)

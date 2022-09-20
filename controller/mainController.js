@@ -1,6 +1,7 @@
 const hana = require('../utils/hana')
 const functions = require('../utils/functions')
 const prisma = require('../utils/prismaDB')
+const file = require('../utils/readAndWriteFiles')
 
 const loginPage = async (req,res) => {
     res.render('login')
@@ -127,10 +128,12 @@ const getReport = async(req,res) => {
 const sendData = async (req,res) => {
     const {date,name,note,user} = req.params
     const time = new Date(date).toISOString()
+    const docNo = await file.getDocNo(user)
+    console.log(docNo)
     try{
         const data = await prisma.findReport()
         if(data.length > 0){
-            await functions.sendToSql(name,time,data,note,user)
+            await functions.sendToSql(name,time,data,note,user,docNo)
             .then(() => {
                 res.send('done')
                 const users = req.session.users
