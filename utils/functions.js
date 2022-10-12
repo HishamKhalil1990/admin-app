@@ -68,16 +68,20 @@ const updateWhsInfo = async (type,id,value) => {
                     const start = async () => {
                         const text = 'لقد تم الموافقة على طلبك لعمل طلبية بضاعة في غير وقتها المحدد'
                         const subject = 'رد السماح بعمل طلبية'
-                        const toEmail = value
-                        await sendEmail(text,subject,toEmail)
+                        if(value){
+                            const toEmail = value
+                            await sendEmail(text,subject,toEmail)
+                        }
                     }
                     start()
                 }else if(type == 'close'){
                     const start = async () => {
                         const text = 'لقد تم الغاء الموافقة المسبقة لعمل طلبية بضاعة في غير وقتها'
                         const subject = 'رد السماح بعمل طلبية'
-                        const toEmail = value
-                        await sendEmail(text,subject,toEmail)
+                        if(value){
+                            const toEmail = value
+                            await sendEmail(text,subject,toEmail)
+                        }
                     }
                     start()
                 }

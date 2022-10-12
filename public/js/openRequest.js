@@ -81,8 +81,8 @@ const change = (type) => {
             showModal("spinner")
             if(type == "close"){
                 const arr = openedOption[0].id.split('-')
-                id = arr[0]
-                email = arr[1]
+                id = arr[0] + "-" + arr[1] + "-" + arr[2]
+                email = arr[3]
             }else{
                 id = "null"
                 email = "null"
@@ -106,8 +106,8 @@ const change = (type) => {
         if(closedOption[0]){
             showModal("spinner")
             const arr = closedOption[0].id.split('-')
-            id = arr[0]
-            email = arr[1]
+            id = arr[0] + "-" + arr[1] + "-" + arr[2]
+            email = arr[3]
             $.post(`/change-allow/${type}/${id}/${email}`)
             .then((msg) => {
                 if(msg == "done"){
