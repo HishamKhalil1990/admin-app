@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^4.1.0",
+    "@prisma/client": "^4.8.0",
     "@sap/hana-client": "^2.13.22",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.1",
@@ -24,6 +24,6 @@
     "node-windows": "^1.0.0-beta.6",
     "nodemailer": "^6.7.8",
     "nodemon": "^2.0.20",
-    "prisma": "^4.1.0"
+    "prisma": "^4.8.0"
   }
 }
