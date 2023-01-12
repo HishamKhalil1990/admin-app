@@ -172,6 +172,13 @@ const changeAllStatus = async (req,res) => {
     }
 }
 
+const routing = (req,res) => {
+    if(req.session.loggedin)
+    {
+        res.render('routing')
+    }
+}
+
 module.exports = {
     countPage,
     getWhs,
@@ -187,5 +194,6 @@ module.exports = {
     logOut,
     getWhsOnfo,
     changeAllow,
-    getUsers
+    getUsers,
+    routing
 }

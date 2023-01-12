@@ -17,6 +17,7 @@ router.get('/report',controller.getReport);
 router.post('/send/:date/:name/:note/:user',controller.sendData);
 router.post('/select-all/:status',controller.changeAllStatus);
 router.post('/change-allow/:type/:id/:email',controller.changeAllow);
+router.get('/Routing',controller.routing);
 router.get('/logout',controller.logOut);
 
 module.exports = router

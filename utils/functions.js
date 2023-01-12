@@ -8,6 +8,7 @@ const sendEmail = require('./email')
 const USERS_TABLE = process.env.USERS_TABLE
 const USERS_WHS_TABLE = process.env.USERS_WHS_TABLE
 const COUNTING_REQUEST_PROCDURE = process.env.COUNTING_REQUEST_PROCDURE
+const SQL_SALES_REPORT = process.env.SQL_SALES_REPORT
 
 const getUser = async (username,password) => {
     try{
@@ -201,11 +202,66 @@ const startTransaction = async (pool,rec,length,arr,name,time,note,user,docNo) =
     })
 }
 
+const getSalesReportData = async (whs,startDate,endDate) =>{ 
+    return new Promise((resolve,reject) => {
+        let response = {
+            msg:'error'
+        }
+        try{
+            const start = async() => {
+                const pool = await sql.getReportSQL()
+                if(pool){
+                    const transaction = await sql.getTransaction(pool);
+                    return transaction.begin((err) => {
+                        if(err){
+                            console.log(err)
+                            pool.close()
+                            resolve(response)
+                        }
+                        pool.request()
+                        .input("WhsCode",whs)
+                        .input("fromDate",startDate)
+                        .input("ToDate",endDate)
+                        .execute(SQL_SALES_REPORT,(err,result) => {
+                            if(err){
+                                console.log('excute',err)
+                                pool.close()
+                                resolve(response)
+                            }
+                            transaction.commit((err) => {
+                                if(err){
+                                    console.log('transaction error : ',err)
+                                    pool.close()
+                                    resolve(response)
+                                }else{
+                                    console.log("Transaction committed.");
+                                    pool.close()
+                                    response.msg = 'done'
+                                    response.data = result.recordset
+                                    resolve(response)
+                                }
+                            });
+                        })
+                    })
+                }else{
+                    resolve(response)
+                }
+            }
+            start()
+        }catch(err){
+            console.log(err)
+            resolve(response)
+        }
+    })
+
+}
+
 module.exports = {
     getItems,
     sendToSql,
     getUser,
     getWhsInfo,
     updateWhsInfo,
-    getUseres
+    getUseres,
+    getSalesReportData
 }

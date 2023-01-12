@@ -1,0 +1,46 @@
+<div class="container py-5">
+  <div class="row" style="padding: 2.5rem 1rem 3rem 1rem !important;">
+    <div class="col-lg-10 mx-auto">
+      <div class="card rounded shadow border-0">
+        <div class="card-body bg-white rounded" style="padding: 5rem 3rem 3rem 3rem !important;">
+          <div style="width:100%; display:flex;justify-content: center;align-items:center;">
+            <p style="font-size: 20;font-weight: bold;">المجموع : <%= total %></p>
+          </div>
+          <div class="table-responsive">
+              <table
+                id="example"
+                style="width: 100%"
+                class="table table-striped table-bordered"
+              >
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Categroy</th>
+                    <th>Sub Categroy</th>
+                    <th>Amount</th>
+                    <th>Warehouse</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                  <% for(let i = 0; i < results.length; i++){ const item =
+                  results[i] %> 
+                  <tr>
+                    <td><%= i + 1 %></td>
+                    <td id="td1-<%= item.id %>"><%= item.NEWCATGEOY %></td>
+                    <td id="td2-<%= item.id %>"><%= item.NEWSUBCATEGORY %></td>
+                    <td id="td3-<%= item.id %>"><%= item.Amount %></td>            
+                    <td id="td-<%= item.id %>"><%= item.WhsName %></td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $("#example").DataTable();
+  </script>
+  
