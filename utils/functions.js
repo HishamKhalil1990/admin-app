@@ -149,56 +149,66 @@ const sendToSql = async (name,time,data,note,user,docNo) => {
     })
 }
 
-const startTransaction = async (pool,rec,length,arr,name,time,note,user,docNo) => {
-    const transaction = await sql.getTransaction(pool);
-    return new Promise((resolve,reject) => {
-        try{
-            transaction.begin((err) => {
-                if(err){
-                    console.log("pool",err)
-                    reject()
-                }
-                pool.request()
-                .input("CountingName",name)
-                .input("CountingDate",time)
-                .input("ItemCode",rec.ItemCode)
-                .input("ItemName",rec.ItemName)
-                .input("UnitMsr",rec.BuyUnitMsr)
-                .input("WhsCode",rec.WhsCode)
-                .input("CodeBars",rec.CodeBars)
-                .input("Note",note)
-                .input("UserName",user)
-                .input("SAP_Processed",2)
-                .input("Price",rec.Price)
-                .input("ScaleType",rec.ScaleType)
-                .input("DocNO",docNo)
-                .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
-                    if(err){
-                        console.log('excute',err)
+const startTransaction = async (conn,rec,length,arr,name,time,note,user,docNo) => {
+    return conn.connect()
+        .then(function (pool) {
+            const start = async() => {
+                const transaction = await sql.getTransaction(pool);
+                return new Promise((resolve,reject) => {
+                    try{
+                        transaction.begin((err) => {
+                            if(err){
+                                console.log("pool",err)
+                                conn.close();
+                                reject()
+                            }
+                            pool.request()
+                            .input("CountingName",name)
+                            .input("CountingDate",time)
+                            .input("ItemCode",rec.ItemCode)
+                            .input("ItemName",rec.ItemName)
+                            .input("UnitMsr",rec.BuyUnitMsr)
+                            .input("WhsCode",rec.WhsCode)
+                            .input("CodeBars",rec.CodeBars)
+                            .input("Note",note)
+                            .input("UserName",user)
+                            .input("SAP_Processed",2)
+                            .input("Price",rec.Price)
+                            .input("ScaleType",rec.ScaleType)
+                            .input("DocNO",docNo)
+                            .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
+                                if(err){
+                                    console.log('excute',err)
+                                    conn.close();
+                                    reject()
+                                }
+                                transaction.commit((err) => {
+                                    if(err){
+                                        console.log('transaction error : ',err)
+                                        reject()
+                                    }
+                                    console.log("Transaction committed.");
+                                    prisma.updateSelectBulk(rec.id,false,0,arr)
+                                    .then(() => {
+                                        if(arr.length == length){
+                                            conn.close();
+                                            resolve();
+                                        }
+                                    })
+                                    .catch(err => {
+                                        conn.close();
+                                        reject()
+                                    })
+                                });
+                            })
+                        })
+                    }catch(err){
+                        conn.close();
                         reject()
                     }
-                    transaction.commit((err) => {
-                        if(err){
-                            console.log('transaction error : ',err)
-                            reject()
-                        }
-                        console.log("Transaction committed.");
-                        prisma.updateSelectBulk(rec.id,false,0,arr)
-                        .then(() => {
-                            if(arr.length == length){
-                                pool.close();
-                                resolve();
-                            }
-                        })
-                        .catch(err => {
-                            reject()
-                        })
-                    });
                 })
-            })
-        }catch(err){
-            reject()
-        }
+            }
+            return start()
     })
 }
 
@@ -208,46 +218,52 @@ const getSalesReportData = async (whs,startDate,endDate) =>{
             msg:'error'
         }
         try{
-            const start = async() => {
-                const pool = await sql.getReportSQL()
-                if(pool){
-                    const transaction = await sql.getTransaction(pool);
-                    return transaction.begin((err) => {
-                        if(err){
-                            console.log(err)
-                            pool.close()
-                            resolve(response)
-                        }
-                        pool.request()
-                        .input("WhsCode",whs)
-                        .input("fromDate",startDate)
-                        .input("ToDate",endDate)
-                        .execute(SQL_SALES_REPORT,(err,result) => {
-                            if(err){
-                                console.log('excute',err)
-                                pool.close()
-                                resolve(response)
+            const getSql = async() => {
+                const conn = await sql.getReportSQL()
+                if(conn){
+                    conn.connect()
+                        .then(function (pool) {
+                            const start = async() => {
+                                const transaction = await sql.getTransaction(pool);
+                                return transaction.begin((err) => {
+                                    if(err){
+                                        console.log(err)
+                                        conn.close()
+                                        resolve(response)
+                                    }
+                                    pool.request()
+                                    .input("WhsCode",whs)
+                                    .input("fromDate",startDate)
+                                    .input("ToDate",endDate)
+                                    .execute(SQL_SALES_REPORT,(err,result) => {
+                                        if(err){
+                                            console.log('excute',err)
+                                            conn.close()
+                                            resolve(response)
+                                        }
+                                        transaction.commit((err) => {
+                                            if(err){
+                                                console.log('transaction error : ',err)
+                                                conn.close()
+                                                resolve(response)
+                                            }else{
+                                                console.log("Transaction committed.");
+                                                conn.close()
+                                                response.msg = 'done'
+                                                response.data = result.recordset
+                                                resolve(response)
+                                            }
+                                        });
+                                    })
+                                })
                             }
-                            transaction.commit((err) => {
-                                if(err){
-                                    console.log('transaction error : ',err)
-                                    pool.close()
-                                    resolve(response)
-                                }else{
-                                    console.log("Transaction committed.");
-                                    pool.close()
-                                    response.msg = 'done'
-                                    response.data = result.recordset
-                                    resolve(response)
-                                }
-                            });
-                        })
+                            start()
                     })
                 }else{
                     resolve(response)
                 }
             }
-            start()
+            getSql()
         }catch(err){
             console.log(err)
             resolve(response)
