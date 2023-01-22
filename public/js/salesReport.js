@@ -1,11 +1,22 @@
 let whs;
+let fromDate;
+let toDate;
 $(document).ready(function () {
     whs = localStorage.getItem("whs")
-    let initialDate = new Date()
-    initialDate = initialDate.toISOString().split('T')[0]
-    document.getElementById("start").defaultValue = initialDate
-    document.getElementById("end").defaultValue = initialDate
-    syncData(initialDate,initialDate)
+    let today = new Date()
+    today = today.toISOString().split('T')[0]
+    const arr = today.split('-')
+    let toDay = parseInt(arr[2]) == 1? '01' : `${parseInt(arr[2]) - 1}`
+    toDay = toDay.length == 1? '0' + toDay : toDay
+    fromDate = arr[0] + '-' + arr[1] + '-01'
+    toDate = arr[0] + '-' + arr[1] + '-' + toDay
+    document.getElementById("start").defaultValue = fromDate
+    document.getElementById("end").defaultValue = toDate
+    fromDate = new Date(fromDate)
+    fromDate = fromDate.toISOString().split('T')[0]
+    toDate = new Date(toDate)
+    toDate = toDate.toISOString().split('T')[0]
+    syncData(fromDate,toDate)
     $("#reportSearch").on("click", () => {
         const start = $("#start").val()
         const end = $("#end").val()
@@ -20,27 +31,32 @@ $(document).ready(function () {
 })
 
 const syncData = (start,end) => {
-    showModal('waiting')
-    if(start && end){
-        if(Date.parse(start) <= Date.parse(end)){
-            $.post(`/Sales/data/${start}/${end}/${whs}`).then(data => {
-                if(data != 'error'){
-                    $('#reportTable').html(data)
-                    hideModal('waiting')
-                }else{
-                    $('#reportTable').html("")
-                    hideModal('waiting')
-                    alert("الرجاء حاول مرة اخرى");
-                }
-            })
-         }else{
-            hideModal('waiting')
-            alert('تاريخ النهاية اقدم نت تاريخ البداية')
-         }
+  showModal('waiting')
+  if(start && end){
+    if((Date.parse(start) >= Date.parse(fromDate)) && (Date.parse(end) <= Date.parse(toDate))){
+      if(Date.parse(start) <= Date.parse(end)){
+          $.post(`/Sales/data/${start}/${end}/${whs}`).then(data => {
+              if(data != 'error'){
+                  $('#reportTable').html(data)
+                  hideModal('waiting')
+              }else{
+                  $('#reportTable').html("")
+                  hideModal('waiting')
+                  alert("الرجاء حاول مرة اخرى");
+              }
+          })
+       }else{
+          hideModal('waiting')
+          alert('تاريخ النهاية اقدم من تاريخ البداية')
+       }
     }else{
-        hideModal('waiting')
-        alert('الرجاء ادخال جميع التواريخ المطلوبة')
+      hideModal('waiting')
+      alert(`الرجاء استخدام تواريخ بين ${fromDate} و ${toDate}`)
     }
+  }else{
+      hideModal('waiting')
+      alert('الرجاء ادخال جميع التواريخ المطلوبة')
+  }
 }
 
 

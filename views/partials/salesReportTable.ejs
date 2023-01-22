@@ -14,10 +14,12 @@
               >
                 <thead>
                   <tr>
-                    <th>No.</th>
+                    <!-- <th>No.</th> -->
+                    <th>Division</th>
                     <th>Categroy</th>
-                    <th>Sub Categroy</th>
                     <th>Amount</th>
+                    <th>Budget</th>
+                    <th>Percentage</th>
                     <th>Warehouse</th>
                   </tr>
                 </thead>
@@ -25,11 +27,13 @@
                   <% for(let i = 0; i < results.length; i++){ const item =
                   results[i] %> 
                   <tr>
-                    <td><%= i + 1 %></td>
-                    <td id="td1-<%= item.id %>"><%= item.NEWCATGEOY %></td>
-                    <td id="td2-<%= item.id %>"><%= item.NEWSUBCATEGORY %></td>
-                    <td id="td3-<%= item.id %>"><%= item.Amount %></td>            
-                    <td id="td-<%= item.id %>"><%= item.WhsName %></td>
+                    <!-- <td><%= i + 1 %></td> -->
+                    <td id="td1-<%= item.id %>"><%= item.NDIVISION %></td>
+                    <td id="td2-<%= item.id %>"><%= item.NEWCATGEOY %></td>
+                    <td id="td3-<%= item.id %>"><%= item.Amount %></td> 
+                    <td id="td4-<%= item.id %>"><%= item.Budget %></td>  
+                    <td id="td5-<%= item.id %>"><%= item.Percentage %> %</td>          
+                    <td id="td6-<%= item.id %>"><%= item.WhsName %></td>
                   </tr>
                   <% } %>
                 </tbody>
