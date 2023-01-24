@@ -14,7 +14,7 @@ model countRequest {
     CodeBars String @default("no bar code")
     WhsCode String
     Price Decimal @db.Decimal(10,6) @default(0)
-    ScaleType String @default("no type")
+    ScaleType String @default("Qnty")
     BuyUnitMsr String @default("Piece")
     Selected Boolean @default(false)
     createdAt DateTime @default(now())

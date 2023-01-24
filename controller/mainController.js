@@ -129,7 +129,6 @@ const sendData = async (req,res) => {
     const {date,name,note,user} = req.params
     const time = new Date(date).toISOString()
     const docNo = await file.getDocNo(user)
-    console.log(docNo)
     try{
         const data = await prisma.findReport()
         if(data.length > 0){
