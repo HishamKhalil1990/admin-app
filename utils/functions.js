@@ -176,6 +176,7 @@ const startTransaction = async (conn,rec,length,arr,name,time,note,user,docNo) =
                             .input("Price",rec.Price)
                             .input("ScaleType",rec.ScaleType)
                             .input("DocNO",docNo)
+                            .input("counts",length)
                             .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
                                 if(err){
                                     console.log('excute',err)
