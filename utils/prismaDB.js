@@ -5,13 +5,30 @@ const createRecords = async (records) => {
     const mappedRecs = records.map((rec,index) => {
         return {
             id:index,
-            ItemCode:rec.ItemCode,
-            ItemName:rec.ItemName,
-            CodeBars:rec.CodeBars != null? rec.CodeBars : undefined,
-            WhsCode:rec.WhsCode,
-            BuyUnitMsr:rec.BuyUnitMsr != null? rec.BuyUnitMsr : undefined,
-            Price:rec.Price,
-            ScaleType:rec.ScaleType
+            ItemCode:rec.ItemCode != null? rec.ItemCode : 'Null',
+            ItemName:rec.ItemName != null? rec.ItemName : 'Null',
+            CodeBars:rec.BarCode != null? rec.BarCode : undefined,
+            WhsCode:rec.WhsCode != null? rec.WhsCode : 'Null',
+            BuyUnitMsr:rec.UgpName != null? rec.UgpName : undefined,
+            Price:rec.Price != null? rec.Price : parseFloat(1),
+            ScaleType:rec.U_ScaleType != null? rec.U_ScaleType : undefined,
+            WhsName:rec.WhsName != null? rec.WhsName : 'Null',
+            PartnerName:rec.PartnerName != null? rec.PartnerName : 'Null',
+            ItmsGrpCod:rec.ItmsGrpCod != null? rec.ItmsGrpCod : 'Null',
+            ItmsGrpNam:rec.ItmsGrpNam != null? rec.ItmsGrpNam : 'Null',
+            PrchseItem:rec.PrchseItem != null? rec.PrchseItem : 'Null',
+            SellItem:rec.SellItem != null? rec.SellItem : 'Null',
+            InvntItem:rec.InvntItem != null? rec.InvntItem : 'Null',
+            UgpEntry:rec.UgpEntry != null? rec.UgpEntry : 'Null',
+            NewFamily:rec.U_O_NewFamily != null? rec.U_O_NewFamily : 'Null',
+            Division:rec.U_O_Division != null? rec.U_O_Division : 'Null',
+            Category:rec.U_O_Category != null? rec.U_O_Category : 'Null',
+            SubCategory:rec.U_O_SubCategory != null? rec.U_O_SubCategory : 'Null',
+            Brand:rec.U_O_Brand != null? rec.U_O_Brand : 'Null',
+            Group:rec.U_O_Group != null? rec.U_O_Group : 'Null',
+            Segement:rec.U_O_Segement != null? rec.U_O_Segement : 'Null',
+            SubSegment:rec.U_O_SubSegment != null? rec.U_O_SubSegment : 'Null',
+            WhsLocked:rec.U_WhsLocked != null? rec.U_WhsLocked : 'Null',
         }
     })
     return await create(mappedRecs)
@@ -20,7 +37,7 @@ const createRecords = async (records) => {
         return 'error'
       })
       .finally(async () => {
-        await prisma.$disconnect()
+        // await prisma.$disconnect()
         return 'created'
       })
 }
@@ -32,7 +49,7 @@ const deleteAll = async () => {
                 return 'error'
             })
             .finally(async () => {
-                await prisma.$disconnect()
+                // await prisma.$disconnect()
                 return 'deleted'
             })
 }
@@ -44,7 +61,7 @@ const findAll = async () => {
                 return 'error'
             })
             .finally(async () => {
-                await prisma.$disconnect()
+                // await prisma.$disconnect()
                 return 'deleted'
             })
 }
@@ -63,7 +80,7 @@ const updateSelect = async (id,status,counter) => {
                     return 'error'
                 })
                 .finally(async () => {
-                    await prisma.$disconnect()
+                    // await prisma.$disconnect()
                     return 'done'
                 })
 }
@@ -75,7 +92,7 @@ const updateAllSelect = async (status) => {
                     return 'error'
                 })
                 .finally(async () => {
-                    await prisma.$disconnect()
+                    // await prisma.$disconnect()
                     return 'done'
                 })
 }
@@ -83,7 +100,7 @@ const updateAllSelect = async (status) => {
 const updateSelectBulk = async (id,status,counter,arr) => {
     return await update(id,status,counter)
                 .finally(async () => {
-                    await prisma.$disconnect()
+                    // await prisma.$disconnect()
                     arr.push('added')
                 })
 }
@@ -125,7 +142,7 @@ const findReport = async() =>{
                 return 'error'
             })
             .finally(async () => {
-                await prisma.$disconnect()
+                // await prisma.$disconnect()
                 return 'deleted'
             })
 }

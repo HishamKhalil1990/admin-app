@@ -9,13 +9,30 @@ datasource db {
 
 model countRequest {
     id Int @id @unique
-    ItemCode String @unique
+    ItemCode String
     ItemName String
     CodeBars String @default("no bar code")
     WhsCode String
     Price Decimal @db.Decimal(10,6) @default(0)
     ScaleType String @default("Qnty")
     BuyUnitMsr String @default("Piece")
+    WhsName String
+    PartnerName String
+    ItmsGrpCod Int
+    ItmsGrpNam String
+    PrchseItem String
+    SellItem String
+    InvntItem String
+    UgpEntry Int
+    NewFamily String
+    Division String
+    Category String
+    SubCategory String
+    Brand String
+    Group String
+    Segement String
+    SubSegment String
+    WhsLocked String
     Selected Boolean @default(false)
     createdAt DateTime @default(now())
     counter Int @default(0)
