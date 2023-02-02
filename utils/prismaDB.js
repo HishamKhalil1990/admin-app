@@ -1,10 +1,9 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
-const createRecords = async (records) => {
-    const mappedRecs = records.map((rec,index) => {
+const createRecords = async (records,user) => {
+    const mappedRecs = records.map((rec) => {
         return {
-            id:index,
             ItemCode:rec.ItemCode != null? rec.ItemCode : 'Null',
             ItemName:rec.ItemName != null? rec.ItemName : 'Null',
             CodeBars:rec.BarCode != null? rec.BarCode : undefined,
@@ -29,6 +28,7 @@ const createRecords = async (records) => {
             Segement:rec.U_O_Segement != null? rec.U_O_Segement : 'Null',
             SubSegment:rec.U_O_SubSegment != null? rec.U_O_SubSegment : 'Null',
             WhsLocked:rec.U_WhsLocked != null? rec.U_WhsLocked : 'Null',
+            User:user
         }
     })
     return await create(mappedRecs)
@@ -42,8 +42,12 @@ const createRecords = async (records) => {
       })
 }
 
-const deleteAll = async () => {
-    return await prisma.countRequest.deleteMany()
+const deleteAll = async (user) => {
+    return await prisma.countRequest.deleteMany({
+        where:{
+            User:user
+        }
+    })
             .catch((e) => {
                 console.log(e)
                 return 'error'
@@ -128,13 +132,14 @@ const updateAll = async (status) => {
     })
 }
 
-const findReport = async() =>{
+const findReport = async(user) =>{
     return await prisma.countRequest.findMany({
                 orderBy:{
                     counter : 'desc'
                 },
                 where : {
-                    Selected : true
+                    Selected : true,
+                    User:user
                 }
             })
             .catch((e) => {

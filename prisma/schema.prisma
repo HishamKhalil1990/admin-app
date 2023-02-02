@@ -8,7 +8,7 @@ datasource db {
 }
 
 model countRequest {
-    id Int @id @unique
+    id Int @id @default(autoincrement())
     ItemCode String
     ItemName String
     CodeBars String @default("no bar code")
@@ -33,6 +33,7 @@ model countRequest {
     Segement String
     SubSegment String
     WhsLocked String
+    User String
     Selected Boolean @default(false)
     createdAt DateTime @default(now())
     counter Int @default(0)

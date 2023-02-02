@@ -62,7 +62,7 @@ const choosePage = async (req,res) => {
 const countPage = async (req,res) => {
     if(req.session.loggedin)
     {
-        await prisma.deleteAll()
+        await prisma.deleteAll(req.session.username)
         res.render('count')
     }else{
         res.redirect('/')
@@ -109,7 +109,8 @@ const getWhsOnfo = async (req,res) => {
 
 const getTable = async (req,res) => {
     const {id} = req.params
-    const data = await functions.getItems(id)
+    const user = req.session.username
+    const data = await functions.getItems(id,user)
     if((data != "error") && (data != "noData")){
         res.render('partials/table',{results:data})
     }else{
@@ -129,16 +130,18 @@ const changeStatus = async (req,res) => {
 }
 
 const getReport = async(req,res) => {
-    const data = await prisma.findReport()
+    const user = req.session.username
+    const data = await prisma.findReport(user)
     res.render('partials/report',{results:data})
 }
 
 const sendData = async (req,res) => {
+    const adminUser = req.session.username
     const {date,name,note,user} = req.params
     const time = new Date(date).toISOString()
     const docNo = await file.getDocNo(user)
     try{
-        const data = await prisma.findReport()
+        const data = await prisma.findReport(adminUser)
         if(data.length > 0){
             await functions.sendToSql(name,time,data,note,user,docNo)
             .then(() => {
