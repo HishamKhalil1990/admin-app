@@ -16,6 +16,13 @@ const validate = async (req,res) => {
     else if(user.length != 0){
         req.session.loggedin = true
         req.session.username = user[0].Username
+        req.session.roles = user[0].Roles.split('-').map(role => {
+            if(role == '1'){
+                return true
+            }else{
+                return false
+            }
+        })
         res.send({msg : 'validate'})
     }else if (user.length == 0){
         res.send({msg : 'not validate'})
@@ -45,7 +52,8 @@ const changeAllow = async (req,res) => {
 const choosePage = async (req,res) => {
     if(req.session.loggedin)
     {
-        res.render('choose')
+        const roles = req.session.roles
+        res.render('choose',{roles})
     }else{
         res.redirect('/')
     }

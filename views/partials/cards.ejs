@@ -1,18 +1,26 @@
+<% if (roles[0]) { %>
 <a id="count" href="/count" class="card education">
      <div class="overlay"></div>
   <div class="circle">
       <p>طلب جرد</p>
 </div>
 </a>
+<% } 
+if (roles[1]) {
+%>
 <a id="openReq" href="/open-request" class="card credentialing">
      <div class="overlay"></div>
   <div class="circle">
       <p>السمح باجراء طلبية</p>
 </div>
 </a>
+<% } 
+if (roles[2]) {
+%>
 <a id="report" href="/Sales" class="card human-resources">
     <div class="overlay"></div>
     <div class="circle">
         <p>تقرير</p>
    </div>
 </a>
+<% } %>
