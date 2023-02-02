@@ -98,12 +98,12 @@ const updateWhsInfo = async (type,id,value) => {
 }
 
 const getItems = async (id,user) => {
-    await prisma.deleteAll()
+    await prisma.deleteAll(user)
     const records = await hana.getItems(id)
     if(records != 'error'){
         const status = await prisma.createRecords(records,user)
         if(status != "error"){
-            return prisma.findAll()
+            return prisma.findAll(user)
         }else{
             return "error"
         }

@@ -48,18 +48,22 @@ const deleteAll = async (user) => {
             User:user
         }
     })
-            .catch((e) => {
-                console.log(e)
-                return 'error'
-            })
-            .finally(async () => {
-                // await prisma.$disconnect()
-                return 'deleted'
-            })
+    .catch((e) => {
+        console.log(e)
+        return 'error'
+    })
+    .finally(async () => {
+        // await prisma.$disconnect()
+        return 'deleted'
+    })
 }
 
-const findAll = async () => {
-    return await prisma.countRequest.findMany()
+const findAll = async (user) => {
+    return await prisma.countRequest.findMany({
+        where:{
+            User:user
+        }
+    })
             .catch((e) => {
                 console.log(e)
                 return 'error'

@@ -60,9 +60,10 @@ const choosePage = async (req,res) => {
 }
 
 const countPage = async (req,res) => {
+    const user = req.session.username
     if(req.session.loggedin)
     {
-        await prisma.deleteAll(req.session.username)
+        await prisma.deleteAll(user)
         res.render('count')
     }else{
         res.redirect('/')
@@ -168,6 +169,7 @@ const sendData = async (req,res) => {
 
 const changeAllStatus = async (req,res) => {
     const {status} = req.params
+    const user = req.session.username
     let msg;
     if(status == 'true'){
         msg = await prisma.updateAllSelect(true)
@@ -175,7 +177,7 @@ const changeAllStatus = async (req,res) => {
         msg = await prisma.updateAllSelect(false)
     }
     if(msg != 'error'){
-        const data = await prisma.findAll()
+        const data = await prisma.findAll(user)
         res.render('partials/table',{results:data})
     }else{
         res.send('error')
