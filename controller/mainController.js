@@ -80,107 +80,147 @@ const openReqPage = async (req,res) => {
 }
 
 const getWhs = async (req,res) => {
-    const whs = await hana.getwarehouseList()
-    if(whs != 'error'){
-        res.send(whs)
+    if(req.session.loggedin)
+    {
+        const whs = await hana.getwarehouseList()
+        if(whs != 'error'){
+            res.send(whs)
+        }else{
+            res.send('error')
+        }
     }else{
-        res.send('error')
+        res.redirect('/')
     }
 }
 
 const getUsers = async (req,res) => {
-    const { id } = req.params
-    const users = await functions.getUseres(id)
-    if(users != 'error'){
-        req.session.users = users
-        res.send(users)
+    if(req.session.loggedin)
+    {
+        const { id } = req.params
+        const users = await functions.getUseres(id)
+        if(users != 'error'){
+            req.session.users = users
+            res.send(users)
+        }else{
+            res.send('error')
+        }
     }else{
-        res.send('error')
+        res.redirect('/')
     }
 }
 
 const getWhsOnfo = async (req,res) => {
-    const info = await functions.getWhsInfo()
-    if(info){
-        res.send(info)
+    if(req.session.loggedin)
+    {
+        const info = await functions.getWhsInfo()
+        if(info){
+            res.send(info)
+        }else{
+            res.send('error')
+        }
     }else{
-        res.send('error')
+        res.redirect('/')
     }
 }
 
 const getTable = async (req,res) => {
-    const {id} = req.params
-    const user = req.session.username
-    const data = await functions.getItems(id,user)
-    if((data != "error") && (data != "noData")){
-        res.render('partials/table',{results:data})
+    if(req.session.loggedin)
+    {
+        const {id} = req.params
+        const user = req.session.username
+        const data = await functions.getItems(id,user)
+        if((data != "error") && (data != "noData")){
+            res.render('partials/table',{results:data})
+        }else{
+            res.send(data)
+        }
     }else{
-        res.send(data)
+        res.redirect('/')
     }
 }
 
 const changeStatus = async (req,res) => {
-    const {id,status,counter} = req.params
-    let msg;
-    if(status == 'true'){
-        msg = await prisma.updateSelect(id,true,counter)
+    if(req.session.loggedin)
+    {
+        const {id,status,counter} = req.params
+        let msg;
+        if(status == 'true'){
+            msg = await prisma.updateSelect(id,true,counter)
+        }else{
+            msg = await prisma.updateSelect(id,false,counter)
+        }
+        res.send(msg)
     }else{
-        msg = await prisma.updateSelect(id,false,counter)
+        res.redirect('/')
     }
-    res.send(msg)
 }
 
 const getReport = async(req,res) => {
-    const user = req.session.username
-    const data = await prisma.findReport(user)
-    res.render('partials/report',{results:data})
+    if(req.session.loggedin)
+    {
+        const user = req.session.username
+        const data = await prisma.findReport(user)
+        res.render('partials/report',{results:data})
+    }else{
+        res.redirect('/')
+    }
 }
 
 const sendData = async (req,res) => {
-    const adminUser = req.session.username
-    const {date,name,note,user} = req.params
-    const time = new Date(date).toISOString()
-    const docNo = await file.getDocNo(user)
-    try{
-        const data = await prisma.findReport(adminUser)
-        if(data.length > 0){
-            await functions.sendToSql(name,time,data,note,user,docNo)
-            .then(() => {
-                res.send('done')
-                const users = req.session.users
-                for(let i = 0; i < users.length; i++){
-                    if(users[i].Username == user){
-                        const value = parseInt(users[i].CountingAvailable) + 1
-                        functions.updateWhsInfo('count',user,value);
-                        break;
+    if(req.session.loggedin)
+    {
+        const adminUser = req.session.username
+        const {date,name,note,user} = req.params
+        const time = new Date(date).toISOString()
+        const docNo = await file.getDocNo(user)
+        try{
+            const data = await prisma.findReport(adminUser)
+            if(data.length > 0){
+                await functions.sendToSql(name,time,data,note,user,docNo)
+                .then(() => {
+                    res.send('done')
+                    const users = req.session.users
+                    for(let i = 0; i < users.length; i++){
+                        if(users[i].Username == user){
+                            const value = parseInt(users[i].CountingAvailable) + 1
+                            functions.updateWhsInfo('count',user,value);
+                            break;
+                        }
                     }
-                }
-            })
-            .catch(() => {
-                res.send('error')
-            })
-        }else{
-            res.send('noData')
+                })
+                .catch(() => {
+                    res.send('error')
+                })
+            }else{
+                res.send('noData')
+            }
+        }catch(err){
+            res.send('error')
         }
-    }catch(err){
-        res.send('error')
+    }else{
+        res.redirect('/')
     }
 }
 
 const changeAllStatus = async (req,res) => {
-    const {status} = req.params
-    const user = req.session.username
-    let msg;
-    if(status == 'true'){
-        msg = await prisma.updateAllSelect(true)
+    if(req.session.loggedin)
+    {
+        const {status} = req.params
+        const user = req.session.username
+        let msg;
+        if(status == 'true'){
+            msg = await prisma.updateAllSelect(true)
+        }else{
+            msg = await prisma.updateAllSelect(false)
+        }
+        if(msg != 'error'){
+            const data = await prisma.findAll(user)
+            res.render('partials/table',{results:data})
+        }else{
+            res.send('error')
+        }
     }else{
-        msg = await prisma.updateAllSelect(false)
-    }
-    if(msg != 'error'){
-        const data = await prisma.findAll(user)
-        res.render('partials/table',{results:data})
-    }else{
-        res.send('error')
+        res.redirect('/')
     }
 }
 
