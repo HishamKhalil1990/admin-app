@@ -126,19 +126,24 @@ const sendToSql = async (name,time,data,note,user,docNo) => {
                 if(!quit){
                     for(let i = 0; i < data.length; i++){
                         const rec = data[i]
-                        startTransaction(pool,rec,length,arr,name,time,note,user,docNo)
-                        .then(() => {
-                            resolve()
-                        })
-                        .catch((err) => {
-                            quit = true
-                        })
-                        if(quit){
-                            break;
-                        }
+                        setTimeout(() => {
+                            const start = async() => {
+                                return excuteTransaction(pool,rec,length,arr,name,time,note,user,docNo,5)
+                                .then(() => {
+                                    if(arr.length == length){
+                                        pool.close();
+                                        resolve()
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.log('rejected')
+                                    reject()
+                                })
+                            }
+                            return start()
+                        },50*i)
                     }
-                }
-                if(quit){
+                }else{
                     reject()
                 }
             }catch(err){
@@ -146,6 +151,18 @@ const sendToSql = async (name,time,data,note,user,docNo) => {
             }
         }
         start()
+    })
+}
+
+const excuteTransaction = (conn,rec,length,arr,name,time,note,user,docNo,retry) => {
+    return new Promise((resolve,reject) => {
+        startTransaction(conn,rec,length,arr,name,time,note,user,docNo)
+        .then(() => {
+            resolve()
+        })
+        .catch(() => {
+            reject()
+        })
     })
 }
 
@@ -159,7 +176,6 @@ const startTransaction = async (conn,rec,length,arr,name,time,note,user,docNo) =
                         transaction.begin((err) => {
                             if(err){
                                 console.log("pool",err)
-                                conn.close();
                                 reject()
                             }
                             pool.request()
@@ -179,32 +195,24 @@ const startTransaction = async (conn,rec,length,arr,name,time,note,user,docNo) =
                             .input("counts",length)
                             .execute(COUNTING_REQUEST_PROCDURE,(err,result) => {
                                 if(err){
-                                    console.log('excute',err)
-                                    conn.close();
                                     reject()
                                 }
                                 transaction.commit((err) => {
                                     if(err){
-                                        console.log('transaction error : ',err)
                                         reject()
-                                    }
-                                    console.log("Transaction committed.");
-                                    prisma.updateSelectBulk(rec.id,false,0,arr)
-                                    .then(() => {
-                                        if(arr.length == length){
-                                            conn.close();
+                                    }else{
+                                        prisma.updateSelectBulk(rec.id,false,0,arr)
+                                        .then(() => {
                                             resolve();
-                                        }
-                                    })
-                                    .catch(err => {
-                                        conn.close();
-                                        reject()
-                                    })
+                                        })
+                                        .catch(err => {
+                                            reject()
+                                        })
+                                    }
                                 });
                             })
                         })
                     }catch(err){
-                        conn.close();
                         reject()
                     }
                 })
