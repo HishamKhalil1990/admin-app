@@ -141,7 +141,7 @@ const sendToSql = async (name,time,data,note,user,docNo) => {
                                 })
                             }
                             return start()
-                        },50*i)
+                        },30*i)
                     }
                 }else{
                     reject()
