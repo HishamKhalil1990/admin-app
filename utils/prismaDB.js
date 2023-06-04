@@ -6,7 +6,7 @@ const createRecords = async (records,user) => {
         return {
             ItemCode:rec.ItemCode != null? rec.ItemCode : 'Null',
             ItemName:rec.ItemName != null? rec.ItemName : 'Null',
-            CodeBars:rec.BarCode != null? rec.BarCode : undefined,
+            CodeBars:rec.BarCode != ''? rec.BarCode : undefined,
             WhsCode:rec.WhsCode != null? rec.WhsCode : 'Null',
             BuyUnitMsr:rec.UgpName != null? rec.UgpName : undefined,
             Price:rec.Price != null? rec.Price : parseFloat(1),
